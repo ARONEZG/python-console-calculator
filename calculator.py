@@ -1,5 +1,4 @@
 
-
 class ExpressionConverter:
     def __init__(self, string):
         self.expression = []
@@ -36,8 +35,13 @@ class ExpressionConverter:
 class Calculator:
 
     def __init__(self):
-        pass
+        self.map = {}
 
+    def __PutHistory(self, expression, result):
+        new_string = ""
+        for string in expression:
+            new_string += " " + string
+        self.map[new_string] = result
 
     def Calculate(self, expression):
         numbers = []
@@ -69,17 +73,32 @@ class Calculator:
             if operations[j] == "-":
                 result -= numbers[i+1]
             j += 1
+        self.__PutHistory(expression, result)
         return result
     
+    def WriteHistory(self):
+        history_txt = open("history.txt", "w")
+        for element in self.map.items():
+            key, value = element
+            history_txt.write(key + " = " + str(value) + "\n")
+            history_txt.write("\n")
+        history_txt.close()
+            
+    
 text = ""    
+calculator = Calculator()
 while True:
     print("Чтобы выйти введите <exit> \n")
     text = input("Введите выражение: \n")
     if (text == "exit"):
         break
     expression = ExpressionConverter(text).expression
-    calculator = Calculator
-    d = calculator.Calculate(calculator, expression)
-    print("Ответ:", d)
+    try:
+        d = calculator.Calculate(expression)
+    except:
+        print("Некорректное выражение")
+    else:
+        print("Ответ:", d)
+    
 
-                
+calculator.WriteHistory()
